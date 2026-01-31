@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Portafolio | Hub</title>
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-width: 100px;
+            --card-expanded: 400px;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: white;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            overflow-x: hidden;
+        }
+
+        h1 { margin-bottom: 2rem; font-weight: 300; letter-spacing: 2px; }
+
+        .container {
+            display: flex;
+            width: 90vw;
+            max-width: 1000px;
+            gap: 10px;
+        }
+
+        .card {
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            height: 60vh;
+            border-radius: 20px;
+            color: #fff;
+            cursor: pointer;
+            flex: 1; /* Todas empiezan iguales */
+            position: relative;
+            transition: all 600px cubic-bezier(0.075, 0.82, 0.165, 1);
+            filter: grayscale(80%);
+        }
+
+        .card:hover {
+            flex: 5; /* Se expande */
+            filter: grayscale(0%);
+        }
+
+        .card h3 {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            margin: 0;
+            opacity: 0;
+            background: rgba(0,0,0,0.6);
+            padding: 10px;
+            border-radius: 10px;
+            transition: opacity 0.3s ease-in;
+        }
+
+        .card:hover h3 {
+            opacity: 1;
+        }
+
+        /* En móviles se apilan */
+        @media (max-width: 600px) {
+            .container { flex-direction: column; height: 100vh; }
+            .card { width: 100%; flex: 1; }
+            .card:hover { flex: 3; }
+        }
+    </style>
+</head>
+<body>
+
+    <h1>MIS TRABAJOS</h1>
+
+    <div class="container">
+        <div class="card" onclick="window.open('https://joticasantos23.github.io/Rice/?authuser=0')" 
+             style="background-image: url('https://i.ytimg.com/vi/R3MDe64zVCQ/maxresdefault.jpg')">
+            <h3>Juego de carreras</h3>
+        </div>
+
+        <div class="card" onclick="window.open('https://joticasantos23.github.io/Recibo2/')" 
+             style="background-image: url('https://marketplace.canva.com/EAGEe--1KW4/2/0/1131w/canva-factura-empresa-profesional-moderno-azul-y-blanco-QbSNmIgjLjM.jpg')">
+            <h3>Factura </h3>
+        </div>
+
+        <div class="card" onclick="window.open('https://joticasantos23.github.io/Hotel/')" 
+             style="background-image: url('https://www.siteminder.com/wp-content/uploads/2018/01/Swissotel-Hotel-Resorts.png')">
+            <h3>Hotel </h3>
+        </div>
+         <div class="card" onclick="window.open('https://joticasantos23.github.io/TC/')" 
+             style="background-image: url('https://www.calconi.com/assets/pics/rechner/es/conversion_temperaturas.png')">
+            <h3>Temperatura </h3>
+        </div>
+         <div class="card" onclick="window.open('https://joticasantos23.github.io/Pokeapi/')" 
+             style="background-image: url('https://pokecardmaker.net/opengraph-image.png')">
+            <h3>Poke api</h3>
+        </div>
+          <div class="card" onclick="window.open('https://joticasantos23.github.io/AUTOS/')" 
+             style="background-image: url('https://static.autofact.cl/imagenFaq/1813-1_20180409155742_cropped.png')">
+            <h3>Autos </h3>
+        </div>
+         <div class="card" onclick="window.open('https://joticasantos23.github.io/PORTA/')" 
+             style="background-image: url('https://mir-s3-cdn-cf.behance.net/projects/404/31c3de219177941.Y3JvcCwxMTQ1LDg5NSwyMiwxODE.png')">
+            <h3>Portafolio </h3>
+        </div>
+        <div class="card" onclick="window.open('https://joticasantos23.github.io/calculadora/')" 
+             style="background-image: url('https://officemax.vtexassets.com/arquivos/ids/1348655/61586_1.jpg?v=638158823096600000')">
+            <h3>IMC </h3>
+        </div>
+    </div>
+
+</body>
+</html>
