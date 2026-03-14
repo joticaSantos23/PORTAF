@@ -3,187 +3,200 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portfolio | Premium Grid</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <title>Portfolio | Minimal Grid</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-canvas: #e2f033; /* El amarillo de fondo de tu referencia */
-            --bg-card-white: #ffffff;
-            --text-dark: #1a1a1a;
-            --radius-main: 24px;
+            --bg: #ffffff;
+            --text: #111111;
+            --accent: #007aff; /* Azul Apple, muy profesional */
+            --gray-light: #f5f5f7;
+            --gap: 30px;
         }
 
         body {
-            background-color: var(--bg-canvas);
-            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: 'Plus Jakarta Sans', sans-serif;
             margin: 0;
-            padding: 40px 20px;
-            display: flex;
-            justify-content: center;
+            padding: 60px 20px;
         }
 
-        /* El contenedor blanco que envuelve todo */
-        .main-wrapper {
-            background: white;
-            width: 100%;
-            max-width: 1000px;
-            border-radius: 40px;
-            padding: 50px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        .header {
+            max-width: 1200px;
+            margin: 0 auto 60px auto;
+            text-align: left;
         }
 
-        /* Menú superior igual a la foto */
-        nav {
-            display: flex;
-            justify-content: center;
-            gap: 25px;
-            margin-bottom: 50px;
-            font-size: 0.7rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: #999;
-        }
-        nav span.active { color: var(--text-dark); text-decoration: underline; }
+        .header h1 { font-weight: 600; font-size: 2rem; margin: 0; letter-spacing: -1px; }
+        .header p { color: #888; margin-top: 10px; }
 
-        /* Grilla Bento: Aquí está la magia del orden */
-        .bento-grid {
+        /* Grilla ultra ordenada: Filas e hileras perfectas */
+        .grid-container {
             display: grid;
-            grid-template-columns: repeat(3, 1fr); /* 3 columnas base */
-            grid-auto-rows: 240px; /* Altura fija para que no se desordene */
-            gap: 20px;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: var(--gap);
+            max-width: 1200px;
+            margin: 0 auto;
         }
 
-        .card {
-            border-radius: var(--radius-main);
+        .project-card {
+            background: var(--bg);
+            border: 1px solid #eee;
+            border-radius: 16px;
+            overflow: hidden;
+            text-decoration: none;
+            color: inherit;
+            position: relative;
+            /* Animación de entrada */
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        /* --- ANIMACIONES AL PASAR EL CURSOR --- */
+        .project-card:hover {
+            transform: translateY(-8px); /* Se eleva */
+            border-color: var(--accent);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.06);
+        }
+
+        .img-box {
+            width: 100%;
+            aspect-ratio: 1 / 1; /* Cuadros perfectos */
+            background: var(--gray-light);
             overflow: hidden;
             position: relative;
-            text-decoration: none;
-            color: var(--text-dark);
-            transition: transform 0.3s ease;
         }
 
-        .card:hover { transform: scale(0.98); }
-
-        /* Tamaños específicos para que encajen */
-        .tall { grid-row: span 2; }
-        .wide { grid-column: span 2; }
-
-        /* Estilos de contenido */
-        .card-content {
-            padding: 25px;
+        .img-box img {
+            width: 100%;
             height: 100%;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            z-index: 2;
-            position: relative;
+            object-fit: cover;
+            transition: transform 0.6s ease;
         }
 
-        .tag {
-            font-size: 0.6rem;
-            font-weight: 800;
-            border: 1px solid rgba(0,0,0,0.1);
-            padding: 4px 8px;
-            border-radius: 4px;
-            width: fit-content;
+        .project-card:hover .img-box img {
+            transform: scale(1.1); /* Zoom suave a la imagen */
         }
 
-        .card h3 {
-            font-size: 1.3rem;
-            margin: 15px 0;
-            line-height: 1.2;
-            font-weight: 800;
-        }
-
-        .btn-round {
-            width: 35px;
-            height: 35px;
-            background: var(--text-dark);
-            color: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-left: auto;
-        }
-
-        /* Colores pastel de la referencia */
-        .lavender { background-color: #bebce1; }
-        .orange { background-color: #f17b43; color: white; }
-        .sage { background-color: #c9d6c8; }
-        .yellow-card { background-color: #f3f374; }
-
-        /* Imágenes de fondo */
-        .bg-img {
+        /* Overlay que aparece en hover */
+        .overlay {
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
-            object-fit: cover;
-            z-index: 1;
+            background: rgba(0, 122, 255, 0.05);
+            opacity: 0;
+            transition: opacity 0.3s ease;
         }
 
-        /* Responsive */
-        @media (max-width: 800px) {
-            .bento-grid { grid-template-columns: 1fr; grid-auto-rows: auto; }
-            .tall, .wide { grid-row: span 1; grid-column: span 1; }
-            .card { min-height: 300px; }
+        .project-card:hover .overlay { opacity: 1; }
+
+        .info {
+            padding: 20px;
+            border-top: 1px solid #f0f0f0;
+        }
+
+        .info h3 {
+            margin: 0;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .info span {
+            font-size: 0.8rem;
+            color: var(--accent);
+            font-weight: 500;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        /* Footer limpio */
+        footer {
+            margin-top: 100px;
+            text-align: center;
+            font-size: 0.8rem;
+            color: #ccc;
         }
     </style>
 </head>
 <body>
 
-<div class="main-wrapper">
-    <nav>
-        <span>GIVEAWAY</span>
-        <span class="active">MIS TRABAJOS</span>
-        <span>PRODUCT LAUNCH</span>
-        <span>CONTACTO</span>
-    </nav>
+    <div class="header">
+        <h1>Proyectos Seleccionados</h1>
+        <p>Explora mis últimos trabajos de desarrollo y diseño.</p>
+    </div>
 
-    <div class="bento-grid">
+    <div class="grid-container">
         
-        <a href="LINK_PROYECTO" class="card lavender tall">
-            <div class="card-content">
-                <div class="tag">WEB APP</div>
-                <h3>Sistema de Facturación Moderna</h3>
-                <div class="btn-round">→</div>
+        <a href="TU_LINK_WEB" class="project-card">
+            <div class="img-box">
+                <div class="overlay"></div>
+                <img src="https://picsum.photos/600/600?random=1" alt="Proyecto">
+            </div>
+            <div class="info">
+                <span>APPLICACIÓN WEB</span>
+                <h3>Juego de Carreras</h3>
             </div>
         </a>
 
-        <div class="card wide">
-            <img src="https://images.unsplash.com/photo-1515879218367-8466d910aaa4?w=800" class="bg-img" alt="Code">
-        </div>
-
-        <a href="LINK_PROYECTO" class="card orange">
-            <div class="card-content">
-                <div class="tag" style="border-color: white;">UI DESIGN</div>
-                <h3>App de Clima & Temperatura</h3>
-                <div class="btn-round" style="background:white; color:black;">→</div>
+        <a href="TU_LINK_WEB" class="project-card">
+            <div class="img-box">
+                <div class="overlay"></div>
+                <img src="https://picsum.photos/600/600?random=2" alt="Proyecto">
+            </div>
+            <div class="info">
+                <span>FINANZAS</span>
+                <h3>Sistema de Factura</h3>
             </div>
         </a>
 
-        <a href="LINK_PROYECTO" class="card sage">
-            <div class="card-content">
-                <div class="tag">API</div>
-                <h3>Poke API Explorer</h3>
-                <div class="btn-round">→</div>
+        <a href="TU_LINK_WEB" class="project-card">
+            <div class="img-box">
+                <div class="overlay"></div>
+                <img src="https://picsum.photos/600/600?random=3" alt="Proyecto">
+            </div>
+            <div class="info">
+                <span>API INTEGRATION</span>
+                <h3>Poke API Web</h3>
             </div>
         </a>
 
-        <div class="card wide tall">
-            <img src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800" class="bg-img" alt="Laptop">
-        </div>
+        <a href="TU_LINK_WEB" class="project-card">
+            <div class="img-box">
+                <div class="overlay"></div>
+                <img src="https://picsum.photos/600/600?random=4" alt="Proyecto">
+            </div>
+            <div class="info">
+                <span>UTILIDAD</span>
+                <h3>Conversor Temperatura</h3>
+            </div>
+        </a>
 
-        <a href="LINK_PROYECTO" class="card yellow-card">
-            <div class="card-content">
-                <div class="tag">GAME</div>
-                <h3>Juego de Carreras JS</h3>
-                <div class="btn-round">→</div>
+        <a href="TU_LINK_WEB" class="project-card">
+            <div class="img-box">
+                <div class="overlay"></div>
+                <img src="https://picsum.photos/600/600?random=5" alt="Proyecto">
+            </div>
+            <div class="info">
+                <span>GESTIÓN</span>
+                <h3>Hotel Admin</h3>
+            </div>
+        </a>
+
+        <a href="TU_LINK_WEB" class="project-card">
+            <div class="img-box">
+                <div class="overlay"></div>
+                <img src="https://picsum.photos/600/600?random=6" alt="Proyecto">
+            </div>
+            <div class="info">
+                <span>SALUD</span>
+                <h3>Calculadora IMC</h3>
             </div>
         </a>
 
     </div>
-</div>
+
+    <footer>
+        &copy; 2026 Portafolio Profesional
+    </footer>
 
 </body>
 </html>
