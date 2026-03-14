@@ -3,345 +3,173 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestor de Gastos Premium</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <title>Portfolio | Minimal Grid</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
-        /* --- ANIMACIONES DE LAS ALERTAS (TOASTS) --- */
-        @keyframes slideIn {
-            from { transform: translateX(120%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
+        :root {
+            --bg: #ffffff;
+            --text: #111111;
+            --accent: #007aff; /* Azul Apple, muy profesional */
+            --gray-light: #f5f5f7;
+            --gap: 30px;
         }
 
-        @keyframes fadeOut {
-            from { transform: scale(1); opacity: 1; }
-            to { transform: scale(0.9); opacity: 0; }
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            margin: 0;
+            padding: 60px 20px;
         }
 
-        .toast-animate-in {
-            animation: slideIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        .header {
+            max-width: 1200px;
+            margin: 0 auto 60px auto;
+            text-align: left;
         }
 
-        .toast-animate-out {
-            animation: fadeOut 0.3s ease-in forwards;
+        .header h1 { font-weight: 600; font-size: 2rem; margin: 0; letter-spacing: -1px; }
+        .header p { color: #888; margin-top: 10px; }
+
+        /* Grilla ultra ordenada: Filas e hileras perfectas */
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: var(--gap);
+            max-width: 1200px;
+            margin: 0 auto;
         }
 
-        /* Clase para error visual en inputs */
-        .input-error {
-            border-color: #f43f5e !important; /* rose-500 */
-            background-color: #fff1f2 !important;
+        .project-card {
+            background: var(--bg);
+            border: 1px solid #eee;
+            border-radius: 16px;
+            overflow: hidden;
+            text-decoration: none;
+            color: inherit;
+            position: relative;
+            /* Animación de entrada */
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
         }
 
-        /* Suavizar transiciones */
-        .transition-all { transition: all 0.3s ease; }
+        /* --- ANIMACIONES AL PASAR EL CURSOR --- */
+        .project-card:hover {
+            transform: translateY(-8px); /* Se eleva */
+            border-color: var(--accent);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.06);
+        }
+
+        .img-box {
+            width: 100%;
+            aspect-ratio: 1 / 1; /* Cuadros perfectos */
+            background: var(--gray-light);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .img-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.6s ease;
+        }
+
+        .project-card:hover .img-box img {
+            transform: scale(1.1); /* Zoom suave a la imagen */
+        }
+
+        /* Overlay que aparece en hover */
+        .overlay {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 122, 255, 0.05);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .project-card:hover .overlay { opacity: 1; }
+
+        .info {
+            padding: 20px;
+            border-top: 1px solid #f0f0f0;
+        }
+
+        .info h3 {
+            margin: 0;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .info span {
+            font-size: 0.8rem;
+            color: var(--accent);
+            font-weight: 500;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        /* Footer limpio */
+        footer {
+            margin-top: 100px;
+            text-align: center;
+            font-size: 0.8rem;
+            color: #ccc;
+        }
     </style>
 </head>
-<body class="bg-slate-50 min-h-screen pb-20 font-sans text-slate-900">
+<body>
 
-    <div id="toast-container" class="fixed top-5 right-5 z-[150] space-y-3 pointer-events-none"></div>
+    <div class="header">
+        <h1>Proyectos Seleccionados</h1>
+        <p>Explora mis últimos trabajos de desarrollo y diseño.</p>
+    </div>
+<h1>MIS TRABAJOS</h1>
 
-    <div id="confirm-modal" class="fixed inset-0 bg-slate-900/50 hidden z-[110] flex items-center justify-center p-4 backdrop-blur-sm">
-        <div class="bg-white rounded-2xl p-6 max-w-sm w-full shadow-2xl transform scale-100 transition-transform">
-            <div class="text-rose-500 mb-4 text-center text-4xl"><i class="fas fa-trash-alt"></i></div>
-            <h3 class="text-xl font-bold text-center text-slate-800">¿Eliminar gasto?</h3>
-            <p class="text-slate-600 mt-2 text-center text-sm">Esta acción no se puede deshacer y se borrará de tus registros.</p>
-            <div class="flex gap-3 mt-6">
-                <button onclick="cerrarConfirmacion()" class="flex-1 px-4 py-3 bg-slate-100 text-slate-700 rounded-xl font-bold text-sm hover:bg-slate-200 transition-colors">CANCELAR</button>
-                <button id="btn-confirmar-borrar" class="flex-1 px-4 py-3 bg-rose-500 text-white rounded-xl font-bold text-sm shadow-lg shadow-rose-200 hover:bg-rose-600 transition-colors">ELIMINAR</button>
-            </div>
+    <div class="container">
+        <div class="card" onclick="window.open('https://joticasantos23.github.io/Rice/?authuser=0')" 
+             style="background-image: url('https://i.ytimg.com/vi/R3MDe64zVCQ/maxresdefault.jpg')">
+            <h3>Juego de carreras</h3>
         </div>
+
+        <div class="card" onclick="window.open('https://joticasantos23.github.io/Recibo2/')" 
+             style="background-image: url('https://marketplace.canva.com/EAGEe--1KW4/2/0/1131w/canva-factura-empresa-profesional-moderno-azul-y-blanco-QbSNmIgjLjM.jpg')">
+            <h3>Factura </h3>
+        </div>
+
+        <div class="card" onclick="window.open('https://joticasantos23.github.io/Hotel/')" 
+             style="background-image: url('https://www.siteminder.com/wp-content/uploads/2018/01/Swissotel-Hotel-Resorts.png')">
+            <h3>Hotel </h3>
+        </div>
+         <div class="card" onclick="window.open('https://joticasantos23.github.io/TC/')" 
+             style="background-image: url('https://www.calconi.com/assets/pics/rechner/es/conversion_temperaturas.png')">
+            <h3>Temperatura </h3>
+        </div>
+         <div class="card" onclick="window.open('https://joticasantos23.github.io/Pokeapi/')" 
+             style="background-image: url('https://pokecardmaker.net/opengraph-image.png')">
+            <h3>Poke api</h3>
+        </div>
+          <div class="card" onclick="window.open('https://joticasantos23.github.io/AUTOS/')" 
+             style="background-image: url('https://static.autofact.cl/imagenFaq/1813-1_20180409155742_cropped.png')">
+            <h3>Autos </h3>
+        </div>
+         <div class="card" onclick="window.open('https://joticasantos23.github.io/PORTA/')" 
+             style="background-image: url('https://mir-s3-cdn-cf.behance.net/projects/404/31c3de219177941.Y3JvcCwxMTQ1LDg5NSwyMiwxODE.png')">
+            <h3>Portafolio </h3>
+        </div>
+        <div class="card" onclick="window.open('https://joticasantos23.github.io/calculadora/')" 
+             style="background-image: url('https://officemax.vtexassets.com/arquivos/ids/1348655/61586_1.jpg?v=638158823096600000')">
+            <h3>IMC </h3>
+        </div>
+        <div class="card" onclick="window.open('https://joticasantos23.github.io/veterinaria/')" 
+             style="background-image: url('https://play-lh.googleusercontent.com/IgrtMlWJ37yQZrFh1CMFCo8E3j3NWKvJ1Zz1J_KW_2BAVXXDGCRUi1PC6B77IlkxyqHJ')">
+            <h3> Veterinaria </h3>
     </div>
 
-    <header class="bg-indigo-700 text-white p-6 shadow-xl sticky top-0 z-40">
-        <div class="max-w-4xl mx-auto">
-            <div class="flex justify-between items-center mb-6">
-                <h1 class="text-2xl font-black tracking-tighter italic">EXPENSE TRACKER v2.2</h1>
-                <p id="current-date-header" class="text-indigo-200 text-[10px] font-bold uppercase tracking-widest hidden md:block"></p>
-            </div>
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
-                <div class="bg-white/10 backdrop-blur-md p-3 rounded-xl border border-white/20">
-                    <p class="text-[10px] uppercase font-bold text-indigo-200 mb-1">Total</p>
-                    <p id="stat-total" class="text-xl font-mono font-bold">$0.00</p>
-                </div>
-                <div class="bg-white/10 backdrop-blur-md p-3 rounded-xl border border-white/20">
-                    <p class="text-[10px] uppercase font-bold text-indigo-200 mb-1">Máximo</p>
-                    <p id="stat-max" class="text-xl font-mono font-bold">$0.00</p>
-                </div>
-                <div class="bg-white/10 backdrop-blur-md p-3 rounded-xl border border-white/20">
-                    <p class="text-[10px] uppercase font-bold text-indigo-200 mb-1">Días</p>
-                    <p id="stat-days" class="text-xl font-mono font-bold">0</p>
-                </div>
-                <div class="bg-white/10 backdrop-blur-md p-3 rounded-xl border border-white/20">
-                    <p class="text-[10px] uppercase font-bold text-indigo-200 mb-1">Items</p>
-                    <p id="stat-count" class="text-xl font-mono font-bold">0</p>
-                </div>
-            </div>
-        </div>
-    </header>
-
-    <main class="max-w-4xl mx-auto p-4 mt-4">
-        <div class="flex flex-col md:flex-row gap-3 mb-6">
-            <div class="relative flex-1">
-                <i class="fas fa-search absolute left-4 top-3.5 text-slate-400"></i>
-                <input type="text" id="search-input" placeholder="Buscar por nombre..." class="w-full pl-12 pr-4 py-3 rounded-2xl border-none shadow-sm focus:ring-2 focus:ring-indigo-500 outline-none bg-white">
-            </div>
-            <select id="filter-categoria" class="py-3 px-4 rounded-2xl border-none shadow-sm outline-none bg-white font-medium text-slate-600 cursor-pointer">
-                <option value="">Todas las categorías</option>
-                <option value="alimentacion">🍎 Alimentación</option>
-                <option value="transporte">🚗 Transporte</option>
-                <option value="entretenimiento">🎬 Entretenimiento</option>
-                <option value="otros">📦 Otros</option>
-            </select>
-            <button onclick="limpiarFiltros()" class="text-indigo-600 font-bold hover:bg-indigo-50 px-6 py-3 rounded-2xl transition-colors">Limpiar</button>
-        </div>
-        <div id="lista-gastos" class="grid gap-4"></div>
-    </main>
-
-    <button onclick="abrirModal()" class="fixed bottom-6 right-6 bg-indigo-600 text-white w-16 h-16 rounded-2xl shadow-xl flex items-center justify-center text-2xl hover:scale-110 active:scale-95 z-50 transition-all shadow-indigo-300">
-        <i class="fas fa-plus"></i>
-    </button>
-
-    <div id="modal-gasto" class="fixed inset-0 bg-slate-900/60 hidden z-[100] flex items-center justify-center p-4 backdrop-blur-sm">
-        <div class="bg-white rounded-3xl w-full max-w-md p-8 shadow-2xl">
-            <div class="flex justify-between items-center mb-6">
-                <h2 id="modal-titulo" class="text-2xl font-black text-slate-800">Nuevo Gasto</h2>
-                <button onclick="cerrarModal()" class="w-10 h-10 flex items-center justify-center rounded-full bg-slate-50 text-slate-400 hover:text-slate-600 transition-colors">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            <form id="form-gasto" class="space-y-5" novalidate>
-                <input type="hidden" id="edit-id">
-                <div>
-                    <label class="block text-xs font-bold uppercase text-slate-400 mb-2 ml-1">Descripción</label>
-                    <input type="text" id="desc" placeholder="Ej. Suscripción Netflix" 
-                           class="w-full bg-slate-50 border-2 border-transparent p-4 rounded-2xl focus:border-indigo-500 focus:bg-white outline-none transition-all">
-                </div>
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-xs font-bold uppercase text-slate-400 mb-2 ml-1">Categoría</label>
-                        <select id="cat" class="w-full bg-slate-50 border-2 border-transparent p-4 rounded-2xl focus:border-indigo-500 outline-none cursor-pointer">
-                            <option value="">Seleccionar...</option>
-                            <option value="alimentacion">Alimentación</option>
-                            <option value="transporte">Transporte</option>
-                            <option value="entretenimiento">Entretenimiento</option>
-                            <option value="otros">Otros</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold uppercase text-slate-400 mb-2 ml-1">Monto ($)</label>
-                        <input type="number" id="monto" step="0.01" placeholder="0.00"
-                               class="w-full bg-slate-50 border-2 border-transparent p-4 rounded-2xl focus:border-indigo-500 outline-none">
-                    </div>
-                </div>
-                <div>
-                    <label class="block text-xs font-bold uppercase text-slate-400 mb-2 ml-1">Fecha</label>
-                    <input type="date" id="fecha" 
-                           class="w-full bg-slate-50 border-2 border-transparent p-4 rounded-2xl focus:border-indigo-500 outline-none">
-                </div>
-                <button type="submit" class="w-full bg-indigo-600 text-white py-4 rounded-2xl font-bold text-lg shadow-lg hover:bg-indigo-700 transition-all active:scale-[0.98]">
-                    Guardar Transacción
-                </button>
-            </form>
-        </div>
     </div>
 
-    <script>
-        let gastos = JSON.parse(localStorage.getItem('gastos_app')) || [];
-        const LS_KEY = 'gastos_app';
-        let idAEliminar = null;
+    <footer>
+        &copy; 2026 Portafolio Profesional
+    </footer>
 
-        // --- MANEJO DE FECHAS (BLOQUEO DE ANTERIORES) ---
-        const inputFecha = document.getElementById('fecha');
-        // Usamos la fecha local del sistema para comparar correctamente
-        const hoyLocal = new Date().toLocaleDateString('en-CA'); // Formato YYYY-MM-DD
-        inputFecha.min = hoyLocal;
-
-        // --- SISTEMA DE NOTIFICACIONES ---
-        function notify(mensaje, tipo = 'success') {
-            const container = document.getElementById('toast-container');
-            const toast = document.createElement('div');
-            const config = {
-                success: { color: 'bg-emerald-500', icon: 'fa-check-circle', label: 'ÉXITO' },
-                error: { color: 'bg-rose-500', icon: 'fa-circle-exclamation', label: 'ERROR' },
-                info: { color: 'bg-indigo-500', icon: 'fa-info-circle', label: 'AVISO' }
-            };
-            const { color, icon, label } = config[tipo] || config.success;
-
-            toast.className = `${color} text-white px-5 py-4 rounded-2xl shadow-2xl flex items-center gap-4 min-w-[300px] pointer-events-auto toast-animate-in border border-white/20`;
-            toast.innerHTML = `
-                <div class="bg-white/20 w-10 h-10 rounded-xl flex items-center justify-center shrink-0"><i class="fas ${icon} text-lg"></i></div>
-                <div class="flex flex-col">
-                    <span class="text-[10px] font-black opacity-70 mb-0.5 tracking-tighter">${label}</span>
-                    <span class="text-sm font-bold leading-tight">${mensaje}</span>
-                </div>`;
-            container.appendChild(toast);
-            setTimeout(() => {
-                toast.classList.add('toast-animate-out');
-                setTimeout(() => toast.remove(), 300);
-            }, 3500);
-        }
-
-        // --- VALIDACIÓN PERSONALIZADA (Adiós burbujas nativas) ---
-        function validarFormulario() {
-            const fields = [
-                { id: 'desc', msg: 'La descripción es obligatoria' },
-                { id: 'cat', msg: 'Debes elegir una categoría' },
-                { id: 'monto', msg: 'Ingresa un monto válido' },
-                { id: 'fecha', msg: 'Debes seleccionar una fecha' }
-            ];
-
-            let esValido = true;
-
-            for (let field of fields) {
-                const el = document.getElementById(field.id);
-                if (!el.value || el.value.trim() === "") {
-                    el.classList.add('input-error');
-                    if(esValido) notify(field.msg, 'error'); // Solo notifica el primer error encontrado
-                    esValido = false;
-                    return false; // Salida rápida
-                } else {
-                    el.classList.remove('input-error');
-                }
-            }
-
-            // Validación extra de fecha (por si el usuario escribe manualmente)
-            if (inputFecha.value < hoyLocal) {
-                inputFecha.classList.add('input-error');
-                notify("No se permiten fechas pasadas", "error");
-                return false;
-            }
-
-            return true;
-        }
-
-        // --- FUNCIONES DE INTERFAZ ---
-        function abrirModal() {
-            document.getElementById('modal-titulo').innerText = "Nuevo Gasto";
-            document.getElementById('form-gasto').reset();
-            document.getElementById('edit-id').value = "";
-            document.querySelectorAll('input, select').forEach(el => el.classList.remove('input-error'));
-            
-            // Valor por defecto hoy
-            inputFecha.value = hoyLocal;
-            
-            document.getElementById('modal-gasto').classList.remove('hidden');
-        }
-
-        function cerrarModal() { document.getElementById('modal-gasto').classList.add('hidden'); }
-
-        document.getElementById('form-gasto').addEventListener('submit', (e) => {
-            e.preventDefault();
-            
-            if (!validarFormulario()) return;
-
-            const id = document.getElementById('edit-id').value;
-            const nuevoGasto = {
-                id: id || crypto.randomUUID(),
-                descripcion: document.getElementById('desc').value,
-                categoria: document.getElementById('cat').value,
-                monto: parseFloat(document.getElementById('monto').value),
-                fecha: document.getElementById('fecha').value
-            };
-
-            if (id) {
-                const idx = gastos.findIndex(g => g.id === id);
-                gastos[idx] = nuevoGasto;
-                notify("Gasto actualizado correctamente");
-            } else {
-                gastos.push(nuevoGasto);
-                notify("Registro guardado con éxito");
-            }
-
-            guardar();
-            cerrarModal();
-        });
-
-        function eliminarGasto(id) { idAEliminar = id; document.getElementById('confirm-modal').classList.remove('hidden'); }
-        function cerrarConfirmacion() { document.getElementById('confirm-modal').classList.add('hidden'); }
-        
-        document.getElementById('btn-confirmar-borrar').onclick = () => {
-            gastos = gastos.filter(g => g.id !== idAEliminar);
-            notify("Registro eliminado", "error");
-            guardar();
-            cerrarConfirmacion();
-        };
-
-        function guardar() { localStorage.setItem(LS_KEY, JSON.stringify(gastos)); renderizar(); }
-
-        function renderizar(data = gastos) {
-            const container = document.getElementById('lista-gastos');
-            const total = data.reduce((acc, g) => acc + g.monto, 0);
-            
-            document.getElementById('stat-total').innerText = `$${total.toLocaleString('en-US', {minimumFractionDigits: 2})}`;
-            document.getElementById('stat-count').innerText = data.length;
-            const max = data.length ? Math.max(...data.map(g => g.monto)) : 0;
-            document.getElementById('stat-max').innerText = `$${max.toFixed(2)}`;
-            document.getElementById('stat-days').innerText = [...new Set(data.map(g => g.fecha))].length;
-
-            container.innerHTML = data.length === 0 ? `
-                <div class="text-center py-20 opacity-20">
-                    <i class="fas fa-receipt text-6xl mb-3"></i>
-                    <p class="font-bold">Sin movimientos</p>
-                </div>` : '';
-            
-            [...data].sort((a,b) => new Date(b.fecha) - new Date(a.fecha)).forEach(g => {
-                container.innerHTML += `
-                    <div class="bg-white p-5 rounded-3xl shadow-sm border border-slate-100 flex justify-between items-center group hover:shadow-md transition-all">
-                        <div class="flex items-center gap-4">
-                            <div class="w-12 h-12 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center transition-transform group-hover:scale-110">
-                                <i class="fas ${getIcon(g.categoria)}"></i>
-                            </div>
-                            <div>
-                                <h4 class="font-bold text-slate-800">${g.descripcion}</h4>
-                                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">${g.fecha} • <span class="text-indigo-500">${g.categoria}</span></p>
-                            </div>
-                        </div>
-                        <div class="flex items-center gap-6">
-                            <span class="text-xl font-black text-slate-800">$${g.monto.toFixed(2)}</span>
-                            <div class="flex gap-1 opacity-0 group-hover:opacity-100 transition-all translate-x-2 group-hover:translate-x-0">
-                                <button onclick="editarGasto('${g.id}')" class="w-9 h-9 flex items-center justify-center text-indigo-500 hover:bg-indigo-50 rounded-xl transition-colors"><i class="fas fa-edit"></i></button>
-                                <button onclick="eliminarGasto('${g.id}')" class="w-9 h-9 flex items-center justify-center text-rose-500 hover:bg-rose-50 rounded-xl transition-colors"><i class="fas fa-trash"></i></button>
-                            </div>
-                        </div>
-                    </div>`;
-            });
-        }
-
-        function getIcon(cat) {
-            const icons = { alimentacion: 'fa-utensils', transporte: 'fa-car', entretenimiento: 'fa-film', otros: 'fa-box' };
-            return icons[cat] || 'fa-tag';
-        }
-
-        function editarGasto(id) {
-            const g = gastos.find(g => g.id === id);
-            abrirModal();
-            document.getElementById('modal-titulo').innerText = "Editar Gasto";
-            document.getElementById('edit-id').value = g.id;
-            document.getElementById('desc').value = g.descripcion;
-            document.getElementById('cat').value = g.categoria;
-            document.getElementById('monto').value = g.monto;
-            document.getElementById('fecha').value = g.fecha;
-        }
-
-        function limpiarFiltros() {
-            document.getElementById('search-input').value = "";
-            document.getElementById('filter-categoria').value = "";
-            renderizar();
-        }
-
-        document.getElementById('search-input').addEventListener('input', (e) => {
-            const val = e.target.value.toLowerCase();
-            renderizar(gastos.filter(g => g.descripcion.toLowerCase().includes(val)));
-        });
-
-        document.getElementById('filter-categoria').onchange = (e) => {
-            renderizar(e.target.value ? gastos.filter(g => g.categoria === e.target.value) : gastos);
-        };
-
-        window.onload = () => {
-            renderizar();
-            document.getElementById('current-date-header').innerText = new Intl.DateTimeFormat('es-ES', { dateStyle: 'full' }).format(new Date());
-        };
-    </script>
 </body>
 </html>
