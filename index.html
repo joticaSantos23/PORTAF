@@ -3,165 +3,187 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portfolio | Clean Space</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <title>Portfolio | Premium Grid</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-color: #fcfcfc;      /* Blanco roto, descansa la vista */
-            --card-bg: #ffffff;
-            --text-main: #1a1a1a;     /* Casi negro */
-            --text-muted: #666666;
-            --accent: #335eea;        /* Azul sutil para detalles */
-            --border-color: #eee;
+            --bg-canvas: #e2f033; /* El amarillo de fondo de tu referencia */
+            --bg-card-white: #ffffff;
+            --text-dark: #1a1a1a;
+            --radius-main: 24px;
         }
 
         body {
-            background-color: var(--bg-color);
-            color: var(--text-main);
+            background-color: var(--bg-canvas);
             font-family: 'Inter', sans-serif;
             margin: 0;
-            padding: 0;
+            padding: 40px 20px;
+            display: flex;
+            justify-content: center;
         }
 
-        /* Contenedor con mucho aire a los lados */
-        .container {
-            max-width: 1100px;
-            margin: 0 auto;
-            padding: 80px 40px;
+        /* El contenedor blanco que envuelve todo */
+        .main-wrapper {
+            background: white;
+            width: 100%;
+            max-width: 1000px;
+            border-radius: 40px;
+            padding: 50px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
         }
 
-        header {
-            margin-bottom: 80px; /* Mucho espacio antes de los proyectos */
+        /* Menú superior igual a la foto */
+        nav {
+            display: flex;
+            justify-content: center;
+            gap: 25px;
+            margin-bottom: 50px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #999;
         }
+        nav span.active { color: var(--text-dark); text-decoration: underline; }
 
-        header h1 {
-            font-size: 2.5rem;
-            font-weight: 600;
-            letter-spacing: -1px;
-            margin: 0;
-        }
-
-        /* Grilla de 2 columnas: Menos apretado que 3 */
-        .project-grid {
+        /* Grilla Bento: Aquí está la magia del orden */
+        .bento-grid {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 60px 40px; /* Mucho espacio vertical entre filas */
+            grid-template-columns: repeat(3, 1fr); /* 3 columnas base */
+            grid-auto-rows: 240px; /* Altura fija para que no se desordene */
+            gap: 20px;
         }
 
-        .project-card {
-            text-decoration: none;
-            color: inherit;
-            display: block;
-            transition: opacity 0.3s ease;
-        }
-
-        .project-card:hover {
-            opacity: 0.8;
-        }
-
-        /* Imagen con bordes suaves y sombra sutil */
-        .image-box {
-            width: 100%;
-            aspect-ratio: 16 / 10;
-            background-color: #f0f0f0;
-            border-radius: 12px;
+        .card {
+            border-radius: var(--radius-main);
             overflow: hidden;
-            margin-bottom: 20px;
-            border: 1px solid var(--border-color);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+            position: relative;
+            text-decoration: none;
+            color: var(--text-dark);
+            transition: transform 0.3s ease;
         }
 
-        .image-box img {
-            width: 100%;
+        .card:hover { transform: scale(0.98); }
+
+        /* Tamaños específicos para que encajen */
+        .tall { grid-row: span 2; }
+        .wide { grid-column: span 2; }
+
+        /* Estilos de contenido */
+        .card-content {
+            padding: 25px;
             height: 100%;
-            object-fit: cover;
-        }
-
-        .project-info h3 {
-            font-size: 1.25rem;
-            margin: 0 0 8px 0;
-            font-weight: 600;
-        }
-
-        .project-info p {
-            font-size: 0.95rem;
-            color: var(--text-muted);
-            margin: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            z-index: 2;
+            position: relative;
         }
 
         .tag {
-            display: inline-block;
-            font-size: 0.75rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: var(--accent);
-            margin-bottom: 10px;
+            font-size: 0.6rem;
+            font-weight: 800;
+            border: 1px solid rgba(0,0,0,0.1);
+            padding: 4px 8px;
+            border-radius: 4px;
+            width: fit-content;
         }
 
-        /* Responsivo: 1 columna en celulares */
-        @media (max-width: 768px) {
-            .project-grid { grid-template-columns: 1fr; gap: 50px; }
-            .container { padding: 40px 20px; }
+        .card h3 {
+            font-size: 1.3rem;
+            margin: 15px 0;
+            line-height: 1.2;
+            font-weight: 800;
+        }
+
+        .btn-round {
+            width: 35px;
+            height: 35px;
+            background: var(--text-dark);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-left: auto;
+        }
+
+        /* Colores pastel de la referencia */
+        .lavender { background-color: #bebce1; }
+        .orange { background-color: #f17b43; color: white; }
+        .sage { background-color: #c9d6c8; }
+        .yellow-card { background-color: #f3f374; }
+
+        /* Imágenes de fondo */
+        .bg-img {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            object-fit: cover;
+            z-index: 1;
+        }
+
+        /* Responsive */
+        @media (max-width: 800px) {
+            .bento-grid { grid-template-columns: 1fr; grid-auto-rows: auto; }
+            .tall, .wide { grid-row: span 1; grid-column: span 1; }
+            .card { min-height: 300px; }
         }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <header>
-            <h1>Mis Proyectos Realizados</h1>
-            <p style="color: var(--text-muted); margin-top: 10px;">Una selección de trabajos enfocados en simplicidad y rendimiento.</p>
-        </header>
+<div class="main-wrapper">
+    <nav>
+        <span>GIVEAWAY</span>
+        <span class="active">MIS TRABAJOS</span>
+        <span>PRODUCT LAUNCH</span>
+        <span>CONTACTO</span>
+    </nav>
 
-        <main class="project-grid">
-            
-            <a href="LINK_WEB_1" class="project-card">
-                <div class="image-box">
-                    <img src="TU_IMAGEN_1.jpg" alt="Proyecto 1">
-                </div>
-                <div class="project-info">
-                    <span class="tag">Desarrollo Web</span>
-                    <h3>Nombre de tu Web 1</h3>
-                    <p>Breve descripción del objetivo de este sitio.</p>
-                </div>
-            </a>
+    <div class="bento-grid">
+        
+        <a href="LINK_PROYECTO" class="card lavender tall">
+            <div class="card-content">
+                <div class="tag">WEB APP</div>
+                <h3>Sistema de Facturación Moderna</h3>
+                <div class="btn-round">→</div>
+            </div>
+        </a>
 
-            <a href="LINK_WEB_2" class="project-card">
-                <div class="image-box">
-                    <div style="background: #eef2ff; height: 100%; display: flex; align-items: center; justify-content: center; color: #6366f1;">[Imagen del Proyecto]</div>
-                </div>
-                <div class="project-info">
-                    <span class="tag">E-commerce</span>
-                    <h3>Tienda Online</h3>
-                    <p>Plataforma de ventas optimizada para móviles.</p>
-                </div>
-            </a>
+        <div class="card wide">
+            <img src="https://images.unsplash.com/photo-1515879218367-8466d910aaa4?w=800" class="bg-img" alt="Code">
+        </div>
 
-            <a href="LINK_WEB_3" class="project-card">
-                <div class="image-box">
-                    <img src="TU_IMAGEN_3.jpg" alt="Proyecto 3">
-                </div>
-                <div class="project-info">
-                    <span class="tag">SaaS / Herramienta</span>
-                    <h3>Dashboard de Gestión</h3>
-                    <p>Interfaz limpia para administración de datos.</p>
-                </div>
-            </a>
+        <a href="LINK_PROYECTO" class="card orange">
+            <div class="card-content">
+                <div class="tag" style="border-color: white;">UI DESIGN</div>
+                <h3>App de Clima & Temperatura</h3>
+                <div class="btn-round" style="background:white; color:black;">→</div>
+            </div>
+        </a>
 
-            <a href="LINK_WEB_4" class="project-card">
-                <div class="image-box">
-                    <div style="background: #fff7ed; height: 100%; display: flex; align-items: center; justify-content: center; color: #f97316;">[Imagen del Proyecto]</div>
-                </div>
-                <div class="project-info">
-                    <span class="tag">Branding</span>
-                    <h3>Identidad Visual</h3>
-                    <p>Diseño y concepto de marca profesional.</p>
-                </div>
-            </a>
+        <a href="LINK_PROYECTO" class="card sage">
+            <div class="card-content">
+                <div class="tag">API</div>
+                <h3>Poke API Explorer</h3>
+                <div class="btn-round">→</div>
+            </div>
+        </a>
 
-        </main>
+        <div class="card wide tall">
+            <img src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800" class="bg-img" alt="Laptop">
+        </div>
+
+        <a href="LINK_PROYECTO" class="card yellow-card">
+            <div class="card-content">
+                <div class="tag">GAME</div>
+                <h3>Juego de Carreras JS</h3>
+                <div class="btn-round">→</div>
+            </div>
+        </a>
+
     </div>
+</div>
 
 </body>
 </html>
